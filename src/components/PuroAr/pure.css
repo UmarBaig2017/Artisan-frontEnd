@@ -107,5 +107,6 @@
     cursor: pointer;
   }
   body{
-    background-color: gray
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(122,173,219,1) 7%, rgba(144,144,201,1) 40%, rgba(0,212,255,1) 100%);
   }

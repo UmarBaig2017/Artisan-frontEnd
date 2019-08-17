@@ -4,7 +4,8 @@ import "./pure.css";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 // import Modal from "react-responsive-modal";
 // import {   ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
 // First way to import
 import { CircleLoader } from 'react-spinners';
 import { Dropdown, } from "react-bootstrap";
@@ -16,7 +17,6 @@ export default class MyListings extends Component {
     this.state = {
       searching: false ,
       searching2: false ,
-      
       modelObj: {},
       LoginName: "",
       Listings: [],
@@ -30,9 +30,7 @@ export default class MyListings extends Component {
       modal: false,
       pages: 0,
       searchVal: "",
-      isSearching: false
-
-
+      isSearching: false,
     }
     this.handleModel = this.handleModel.bind(this)
     this.toggle = this.toggle.bind(this);
@@ -43,11 +41,31 @@ export default class MyListings extends Component {
     this.handleDecriment = this.handleDecriment.bind(this)
     // this.handleDays = this.handleDays.bind(this)
     this.applyFilters = this.applyFilters.bind(this)
-
+    this.Check = this.Check.bind(this)
   }
+  Check = (e,i) => {
+    
+        confirmAlert({
+          title: 'Confirm Delete',
+          message: 'Are you sure to do this.',
+          buttons: [
+            {
+              label: 'Yes',
+              onClick: () => {
+                this.handleDelete(e,i)
+              }
+            },
+            {
+              label: 'No',
+              onClick: () => console.log("nothing happend")
+            }
+          ]
+        });
+      };
+    
 
 
-  async fetchData() {
+async fetchData() {
     let pageNumber = this.state.pageNum
 
     const response = await fetch("https://secret-lake-27653.herokuapp.com/api/getListings" + pageNumber,
@@ -79,7 +97,8 @@ export default class MyListings extends Component {
       })
           }
   }
-  async componentDidMount() {
+
+async componentDidMount() {
     var user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       let loginperson = user.Name
@@ -98,7 +117,7 @@ export default class MyListings extends Component {
       this.props.history.push("/")
     }
   }
-  async handleDelete(e, i) {
+async handleDelete(e, i) {
     let arr = this.state.Listings;
     let Data = {
       id: e
@@ -201,7 +220,7 @@ export default class MyListings extends Component {
       minPrice: "0",
       maxPrice:'10000'
     }
-    console.log(data)
+ 
 
     if(this.state.days!=='0'){
       data.days=this.state.days
@@ -216,8 +235,7 @@ export default class MyListings extends Component {
         body:JSON.stringify(data)
       });
     const json = await response.json();
-    console.log(json)
-    console.log(json.data)
+    
     let ar = json.data
    this.setState({
     Listings: ar
@@ -237,10 +255,10 @@ export default class MyListings extends Component {
       })
     }
     else {
-
-    }
+ }
 
   }
+
   handleDays(e) {
 
    
@@ -371,7 +389,7 @@ export default class MyListings extends Component {
                   </a>
                   <div className="dropdown-menu">
 
-                    <button onClick={this.handleLogout.bind(this)} className="dropdown-item" > <i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <button onClick={this.handleLogout.bind(this)} className="dropdown-item" > <i className="fas fa-sign-out-alt"></i> Logout</button>
                   </div>
                 </li>
               </ul>
@@ -379,131 +397,171 @@ export default class MyListings extends Component {
           </div>
         </nav>
         <br />
-        <div class="container-fluid row">
-          <div className="col-md-3 ">
-          <ul className="navbar-nav">
-          <li className="nav-item">
-            <Link to="/Dashboard"><li className="list-group-item bg-light"><i className="fa fa-tachometer"></i> Dashboard</li></Link>
-          </li>
-          <li className="nav-item">
-            <a href="#new1" data-toggle="collapse">
-              <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> My Consigments  <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li></a>
-            <ul className="collapse"  id="new1" style={{ "listStyle": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
-              <Link to="/MyUsers" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> User Details
-            </li>
-              </Link>
-
-
-              <Link to="/MySales" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i> Sale Details
-            </li>
-              </Link>
-              <Link to="/MyListings" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listing
+        <div className="container-fluid row">
+        <div style={{"paddingBottom": 50}} className="col-md-3 ">
+        <ul className="navbar-nav">
+        <li className="nav-item">
+          <Link to="/Dashboard"><li className="list-group-item bg-light"><i className="fa fa-tachometer"></i> <b> Dashboard </b></li></Link>
         </li>
-              </Link>
-              <Link to="/MyCategory" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Categories
-    </li>
-              </Link>
-
-            </ul>
+        <li className="nav-item">
+          <a href="#new1" data-toggle="collapse">
+            <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> <b> My Consignment </b>  <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li></a>
+          <ul className="collapse"  id="new1" style={{ "listStyle": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
+            <Link to="/MyUsers" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> User Details
           </li>
-          <li className="nav-item">
-            <a href="#new2" data-toggle="collapse">
-              <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> Mi consignaciones <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li></a>
-            <ul className="collapse" id="new2" style={{ "list-style": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
-              <Link to="/MiUsers" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> Detalles de usuario
-            </li>
-              </Link>
+            </Link>
 
 
-              <Link to="/MiSales" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i>  Detalles de venta
-            </li>
-              </Link>
-              <Link to="/MiListings" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listado
+            <Link to="/MySales" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i> Sale Details
+          </li>
+            </Link>
+            <Link to="/MyListings" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listing
+      </li>
+            </Link>
+            <Link to="/MyCategory" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Categories
+  </li>
+            </Link>
+            <Link to="/MyReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fa fa-bug" aria-hidden="true"></i> Reports
+</li>
+          </Link>
+          <Link to="/MyListingReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fas fa-flag" aria-hidden="true"></i> Listing Reports
+</li>
+          </Link>
+
+          </ul>
         </li>
-              </Link>
-              <Link to="/MiCategory" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Las categorías
-    </li>
-              </Link>
-
-            </ul>
+        <li className="nav-item">
+          <a href="#new2" data-toggle="collapse">
+            <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> <b> Mi Consignacion </b> <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li></a>
+          <ul className="collapse" id="new2" style={{ "list-style": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
+            <Link to="/MiUsers" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> Detalles de usuario
           </li>
-          <li className="nav-item">
-            <a href="#new3" data-toggle="collapse">
-              <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> Pure Artisan <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li></a>
-            <ul className="collapse" id="new3" style={{ "list-style": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
-              <Link to="/PureUsers" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> User Details
-            </li>
-              </Link>
+            </Link>
 
 
-              <Link to="/PureSales" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i> Sale Details
-            </li>
-              </Link>
-              <Link to="/PureListings" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listing
+            <Link to="/MiSales" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i>  Detalles de venta
+          </li>
+            </Link>
+            <Link to="/MiListings" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listado
+      </li>
+            </Link>
+            <Link to="/MiCategory" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Las categorías
+  </li>
+            </Link>
+            <Link to="/MiReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fa fa-bug" aria-hidden="true"></i> Informes
+</li>
+          </Link>
+          <Link to="/MiListingReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fas fa-flag" aria-hidden="true"></i>  Listado de informes
+      </li>
+          </Link>
+
+          </ul>
         </li>
-              </Link>
-              <Link to="/PureCategory" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Categories
-    </li>
-              </Link>
-
-            </ul>
+        <li className="nav-item">
+          <a href="#new3" data-toggle="collapse">
+            <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> <b> Pure Artisan</b> <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li></a>
+          <ul className="collapse" id="new3" style={{ "list-style": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
+            <Link to="/PureUsers" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> User Details
           </li>
-          <li className="nav-item">
-            <a href="#new4" data-toggle="collapse">
-              <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> Pura Artesana <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li> </a>
-            <ul className="collapse" id="new4" style={{ "list-style": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
-              <Link to="/PureArUsers" className="nav-item">
-                <li  className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> Detalles de usuario
-            </li>
-
-              </Link>
+            </Link>
 
 
-              <Link to="/PureArSales" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i> Detalles de venta
-            </li>
-              </Link>
-              <Link to="/PureArListings" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listado
+            <Link to="/PureSales" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i> Sale Details
+          </li>
+            </Link>
+            <Link to="/PureListings" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listing
+      </li>
+            </Link>
+            <Link to="/PureCategory" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Categories
+  </li>
+            </Link>
+            <Link to="/PureReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fa fa-bug" aria-hidden="true"></i> Reports
+</li>
+          </Link>
+          <Link to="/PureListingReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fas fa-flag" aria-hidden="true"></i> Listing Reports
+</li>
+          </Link>
+
+          </ul>
         </li>
-              </Link>
-              <Link to="/PureArCategory" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Las categorías
-    </li>
-              </Link>
-
-            </ul>
+        <li className="nav-item">
+          <a href="#new4" data-toggle="collapse">
+            <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> <b> Puro Artesanal </b> <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li> </a>
+          <ul className="collapse" id="new4" style={{ "list-style": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
+            <Link to="/PureArUsers" className="nav-item">
+              <li  className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> Detalles de usuario
           </li>
 
-        </ul> </div>
+            </Link>
+
+
+            <Link to="/PureArSales" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i> Detalles de venta
+          </li>
+            </Link>
+            <Link to="/PureArListings" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listado
+      </li>
+            </Link>
+            <Link to="/PureArCategory" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Las categorías
+  </li>
+            </Link>
+            <Link to="/PureArReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fa fa-bug" aria-hidden="true"></i> Informes
+</li>
+          </Link>
+          <Link to="/PureArListingReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fas fa-flag" aria-hidden="true"></i> Listado de Informes
+</li>
+          </Link>
+
+          </ul>
+        </li>
+
+      </ul> </div>
 
           <div className="col-md-9">
             <div className="row">
@@ -518,7 +576,7 @@ export default class MyListings extends Component {
                           <div className="input-group">
                             <input type="search" onChange={this.handleChange.bind(this)} value={this.state.searchVal} className="form-control" placeholder="Search Listing Name" />
                             {this.state.searching===true && <div className="input-group-btn">
-                            <button style={{"margin": 5}} onClick={this.handleClear.bind(this)} className="btn btn-default"><i class="fas fa-times"></i></button>
+                            <button style={{"margin": 5}} onClick={this.handleClear.bind(this)} className="btn btn-default"><i className="fas fa-times"></i></button>
                           </div>}
                             <div className="input-group-btn">
                               <button onClick={this.handleSearch.bind(this)} className="btn btn-danger"><i className="fa fa-search"></i> Search </button>
@@ -530,9 +588,9 @@ export default class MyListings extends Component {
                     </div>
 
                   </div>
-                 {this.state.searching===false &&  <div class="container">
-                    <div class="row">
-                      <div class="col-sm-3" >
+                 {this.state.searching===false &&  <div className="container">
+                    <div className="row">
+                      <div className="col-sm-3" >
                         <Dropdown>
                           <Dropdown.Toggle variant="success" id="dropdown-basic">
                             Select by Days {this.state.days}
@@ -603,7 +661,7 @@ export default class MyListings extends Component {
                             <div className="row">
 
                               <div style={{ "height": 200, "width": 200 }} className="col-md-3">
-                                <img src={listings.imageLinks[0]} alt="Images" class="list-img" />
+                                <img src={listings.imageLinks[0]} alt="Images" className="list-img" />
 
                               </div>
 
@@ -611,14 +669,14 @@ export default class MyListings extends Component {
                                 <h3 className="list-group-item-text">{listings.title}</h3>
                                 <h6 className="list-group-item-text"> Category : {listings.Category}</h6>
                                 <p>Price : {listings.price} $ </p>
-                                <p><button class="btn btn-primery" onClick={() => { this.handleModel(index) }} data-toggle="modal" data-target="#popUpWindow" ><i className="fa fa-read"></i>Read More  </button></p>
+                                <p><button className="btn btn-primery" onClick={() => { this.handleModel(index) }} data-toggle="modal" data-target="#popUpWindow" ><i className="fa fa-read"></i>Read More  </button></p>
                                 <p >{listings.description}</p>
 
 
                               </div>
                               <div className="col-md-1">
                                 <Popup
-                                  trigger={<button type="button" onClick={() => this.handleDelete(listings._id, index)} className="close cls" data-dismiss="modal">&times;</button>}
+                                  trigger={<button type="button" onClick={() => this.Check(listings._id, index)} className="close cls" data-dismiss="modal">&times;</button>}
                                   position="left top"
                                   on="hover"
                                 >

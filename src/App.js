@@ -7,15 +7,15 @@ import firebase from "firebase";
 
   // Your web app's Firebase configuration
   var firebaseConfig = {
-    apiKey: "AIzaSyAHfO6C7EQqqIkIE0nqNKo8bQDSK5Wrfqo",
-    authDomain: "adminpanelbruc.firebaseapp.com",
-    databaseURL: "https://adminpanelbruc.firebaseio.com",
-    projectId: "adminpanelbruc",
-    storageBucket: "adminpanelbruc.appspot.com",
-    messagingSenderId: "611866549272",
-    appId: "1:611866549272:web:e98cd7f24b14c06e"
+    apiKey: "AIzaSyC1i5RwwQUisIInOhETWYMU9HQ7iayhJ50",
+    authDomain: "pureartisanapp.firebaseapp.com",
+    databaseURL: "https://pureartisanapp.firebaseio.com",
+    projectId: "pureartisanapp",
+    storageBucket: "pureartisanapp.appspot.com",
+    messagingSenderId: "1020995126307",
+    appId: "1:1020995126307:web:eef21aaffed8d474"
   };
- 
+  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
 
 class App extends Component {

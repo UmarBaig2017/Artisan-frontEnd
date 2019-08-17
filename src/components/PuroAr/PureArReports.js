@@ -3,101 +3,24 @@ import { Link } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import "./pure.css";
 import { CircleLoader } from 'react-spinners';
-export default class PureArSales extends Component {
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
+
+export default class PureArReports extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      LoginName: "",
-      Sales: [],
-      modelObj: {},
-      loading: false,
 
     }
+
+    // this.handleReset = this.handleReset.bind(this);
     this.fetchData = this.fetchData.bind(this);
-    this.handleReset = this.handleReset.bind(this);
-    this.handleModel = this.handleModel.bind(this)
-    this.toggle = this.toggle.bind(this);
-    this.handleDeleteSales = this.handleDeleteSales.bind(this);
-    this.handleAssending = this.handleAssending.bind(this);
-    this.handleDeceding = this.handleDeceding.bind(this);
-  }
+    // this.handleModel = this.handleModel.bind(this)
+    // this.toggle = this.toggle.bind(this);
+    // this.handleDeleteReport = this.handleDeleteReport.bind(this);
+    this.handleDeleteSales = this.handleDeleteSales.bind(this)
+    this.Check = this.Check.bind(this)
 
-  handleAssending() {
-    let list = this.state.Sales;
-    let newlist = list.sort((a, b) => b.amount - a.amount);
-   
-    this.setState({
-      Sales: newlist
-    });
-  }
-  handleDeceding() {
-    let list = this.state.Sales;
-    let newlist = list.sort((a, b) => a.amount - b.amount);
- 
-    this.setState({
-      Sales: newlist
-    });
-  }
-
-  componentDidMount() {
-    this.setState({
-      loading: true
-    })
-    var user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      let loginperson = user.Name
-      let islogin = user.login
-
-      if (islogin === 1) {
-        this.setState({
-          LoginName: loginperson
-        })
-        this.fetchData()
-
-      }
-
-    }
-    else {
-      alert("User Must Login First")
-      this.props.history.push("/")
-    }
-
-  }
-  handleDeleteSales(e) {
-
-    let data = {
-      id: e
-    }
-    fetch("https://polar-wildwood-42259.herokuapp.com/api/deletOrder",
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      }).then(res => res.json())
-      .then(data => {
-
-        this.fetchData()
-
-      }).catch(err => console.error(err))
-
-  }
-  handleModel(index) {
-    let num = this.state.Sales[index]
-    this.setState({
-      modelObj: num
-    }, () => {
-      this.toggle()
-    })
-
-  }
-
-
-  toggle() {
-    this.setState(prevState => ({
-      modal: !prevState.modal
-    }));
   }
   handleLogout() {
     let user = {
@@ -106,35 +29,87 @@ export default class PureArSales extends Component {
     }
     localStorage.setItem('user', JSON.stringify(user));
     this.props.history.push("/")
+
+  }
+  Check = (id) => {
+  
+        confirmAlert({
+          title: 'Confirm Delete',
+          message: 'Are you sure to do this.',
+          buttons: [
+            {
+              label: 'Yes',
+              onClick: () => {
+                this.handleDeleteSales(id)
+              }
+            },
+            {
+              label: 'No',
+              onClick: () => console.log("nothing happend")
+            }
+          ]
+        });
+      };
+    
+async  handleDeleteSales(id) {
+   
+   
+    let Data = {
+      id: id
+    }
+
+  
+    await fetch("https://polar-wildwood-42259.herokuapp.com/api/DeleteReport", {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(Data)
+    })
+      .then(res => res.json())
+      .then(data => {
+       this.fetchData()
+      })
+      .catch(err => console.error(err));
+
+
   }
 
+  componentDidMount() {
+    var user = JSON.parse(localStorage.getItem('user'));
+    let loginperson = user.Name
+    let islogin = user.login
 
+    if (islogin === 1) {
+      this.setState({
+        LoginName: loginperson
+      })
+      this.fetchData()
+
+    }
+    else {
+      alert("User Must Login First")
+      this.props.history.push("/")
+    }
+  }
   async fetchData() {
-    const response = await fetch("https://polar-wildwood-42259.herokuapp.com/api/getOrders",
+
+    const response = await fetch("https://polar-wildwood-42259.herokuapp.com/api/getReports",
       {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json"
         }
       });
     const json = await response.json();
+    
 
+    this.setState({
+      Reports: json.docs,
+      loading: false
 
-    if (json.length > 0) {
-      this.setState({
-        Sales: json,
-        loading: false
-      }, () => {
-
-      })
-    }
-  }
-
-  handleReset() {
-    this.fetchData()
-  }
-  handleTopToBotom() {
-
+    })
   }
   render() {
     const style = {
@@ -146,22 +121,21 @@ export default class PureArSales extends Component {
         {/* navigation */}
         <nav className="navbar navbar-expand-md bg-dark navbar-dark">
           <div className="container-fluid">
-          <h3 style={{"color": "white"}}><b>Admin Panel</b></h3>
+            <h3 style={{ "color": "white" }}><b>Admin Panel</b></h3>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
               <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse" id="collapsibleNavbar">
               <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
-                
+
                 </li>
                 <li className="nav-item dropdown">
                   <a className="nav-link dropdown-toggle" id="navbardrop" data-toggle="dropdown">
                     {this.state.LoginName}
                   </a>
                   <div className="dropdown-menu">
-                    <button onClick={this.handleLogout.bind(this)} className="dropdown-item" > <i className="fas fa-sign-out-alt"></i>
-                      Cerrar sesión</button>
+                    <button onClick={this.handleLogout.bind(this)} className="dropdown-item" > <i className="fas fa-sign-out-alt"></i> Logout</button>
 
                   </div>
                 </li>
@@ -340,23 +314,9 @@ export default class PureArSales extends Component {
             <div className="row">
               <div className="col-md-12">
                 <div className="card">
-                  <div className="card-header"> <b>Detalles de ventas </b></div>
+                  <div className="card-header"> <b> Detalle de informes </b></div>
                   <div className="card-body">
                     <div style={{ "padding": 20 }} className="row">
-                      <div className="col-sm-3" >
-                        <button type="button" onClick={this.handleDeceding} className="btn btn-secondary">
-                          Precio mayor a menor</button>
-                      </div>
-                      <div className="col-sm-3" >
-                        <button type="button" onClick={this.handleAssending} className="btn btn-secondary">
-                          Precio de menor a mayor</button>
-                      </div>
-                      <div className="col-sm-3" >
-                        <button type="button" onClick={this.handleReset} className="btn btn-secondary">
-                          Reiniciar</button>
-                      </div>
-
-
 
                       <div style={{ "textAlign": "center", "marginTop": 10 }} className="table-responsive">
                         {this.state.loading &&
@@ -373,29 +333,28 @@ export default class PureArSales extends Component {
                           <thead>
                             <tr>
                               <th>S.No</th>
-                              <th> Nombre del vendedor</th>
-                              <th>Ápice</th>
-                              <th>Cantidad</th>
+                              <th> Ápice </th>
                               <th>
-                                Nombre del comprador</th>
-                              <th>
-                                comportamiento</th>
+                              Nombre completo</th>
+                              <th>Email</th>
+                              <th> Tipo de informe </th>
+                              <th> 
+                              Comportamiento</th>
                             </tr>
                           </thead>
-                          {this.state.Sales && <tbody>
+                          {this.state.Reports && <tbody>
 
-                            {this.state.loading === false && this.state.Sales && this.state.Sales.map((item, index) => {
+                            {this.state.loading === false && this.state.Reports && this.state.Reports.map((item, index) => {
                               return (
                                 <tr key={index}>
-                                  <td>{index + 1}</td>
-                                  <td>{item.sellerName}</td>
+                                  <td> <b>{index + 1} </b></td>
                                   <td>{item.title}</td>
-                                  <td>{item.amount}</td>
-                                  <td>{item.buyerName}</td>
+                                  <td>{item.fName}</td>
+                                  <td>{item.email}</td>
+                                  <td>{item.type}</td>
                                   <td>
-                                    <button className="btn btn-success" onClick={() => { this.handleDeleteSales(item._id) }} type="submit" style={{ "margin": 10 }}>Borrar</button>
-                                    <button className="btn btn-success" type="submit" onClick={() => { this.handleModel(index) }} data-toggle="modal" data-target="#myModal">
-                                    Ver</button>
+                                    <button className="btn btn-success" onClick={() => { this.Check(item._id) }} type="submit" style={{ "margin": 10 }}>Borrar</button>
+
                                   </td>
                                 </tr>
                               )
@@ -419,23 +378,22 @@ export default class PureArSales extends Component {
           </div>
         </div>
 
-        <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-          <ModalHeader toggle={this.toggle}>
-            <img src={this.state.modelObj.imageLink} className="img-fluid" alt="Responsive image"></img>
-          </ModalHeader>
-          <ModalBody style={{ "fontFamily": "monospace" }}>
-            <h4> Categoría :  {this.state.modelObj.Category} </h4>
-            <h4>  Nombre del vendedor :  {this.state.modelObj.sellerName} </h4>
-            <h4> 
-            Nombre del comprador:  {this.state.modelObj.buyerName}</h4>
-            <p> <b> Descripción :  </b> {this.state.modelObj.description}</p>
-
-          </ModalBody>
-          <ModalFooter>
-
-          </ModalFooter>
-        </Modal>
-
+        {  /*  <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+                    <ModalHeader toggle={this.toggle}>
+                      <img src={this.state.modelObj.imageLink} className="img-fluid" alt="Responsive image"></img>
+                    </ModalHeader>
+                    <ModalBody style={{"fontFamily": "monospace" }}>
+                      <h4> Category :  {this.state.modelObj.Category} </h4>
+                      <h4>  Seller Name :  {this.state.modelObj.sellerName} </h4>
+                      <h4> Buyer Name :  {this.state.modelObj.buyerName}</h4>
+                      <p> <b> Description :  </b> {this.state.modelObj.description}</p>
+          
+                    </ModalBody>
+                    <ModalFooter>
+          
+                    </ModalFooter>
+                  </Modal>*/
+        }
 
       </div>
     )

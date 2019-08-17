@@ -51,7 +51,7 @@ export default class Dashboard extends Component {
     const auth = firebase.auth();
     let promise = auth.createUserWithEmailAndPassword(this.state.SubEmail, this.state.subPasswrd)
     .then(credential => {
-        console.log(credential.user.uid)
+     
       let email = this.state.SubEmail
       let em = email.replace('.com', '')
       let db = firebase.database();
@@ -198,13 +198,19 @@ export default class Dashboard extends Component {
         let data = snap.child(dataRef).val();
 
         arr.push(data)
-        this.setState({
-          loading: false,
-          admins: arr
-        }, () => {
+        if(arr.length>0){
+          this.setState({
+            loading: false,
+              admins: arr
 
-        });
-
+          })
+        }
+        else{
+          this.setState({
+            loading:false
+          })
+        }
+        
       });
     })
   }
@@ -217,7 +223,7 @@ export default class Dashboard extends Component {
     this.props.history.push("/")
   }
   handleDeleteSubAdmin(e,uid) {
-  console.log(e, uid)
+ 
     let data ={
      uid : uid
     }
@@ -230,7 +236,7 @@ export default class Dashboard extends Component {
           body: JSON.stringify(data)
         }).then(res => res.json())
         .then((data)=> {
-          console.log(data)
+       
           var firebaseRef = firebase.database().ref('Admins');
         firebaseRef.child(uid).remove().then(()=>{
          this.FetchAdmins()
@@ -291,130 +297,170 @@ border-color: red;
         <br />
        
         <div className="container-fluid row">
-          <div className="col-md-3 ">
-          <ul className="navbar-nav">
-          <li className="nav-item">
-            <Link to="/Dashboard"><li className="list-group-item bg-light"><i className="fa fa-tachometer"></i> Dashboard</li></Link>
-          </li>
-          <li className="nav-item">
-            <a href="#new1" data-toggle="collapse">
-              <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> My Consigments  <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li></a>
-            <ul className="collapse"  id="new1" style={{ "listStyle": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
-              <Link to="/MyUsers" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> User Details
-            </li>
-              </Link>
-
-
-              <Link to="/MySales" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i> Sale Details
-            </li>
-              </Link>
-              <Link to="/MyListings" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listing
+        <div style={{"paddingBottom": 50}} className="col-md-3 ">
+        <ul className="navbar-nav">
+        <li className="nav-item">
+          <Link to="/Dashboard"><li className="list-group-item bg-light"><i className="fa fa-tachometer"></i> <b> Dashboard </b></li></Link>
         </li>
-              </Link>
-              <Link to="/MyCategory" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Categories
-    </li>
-              </Link>
-
-            </ul>
+        <li className="nav-item">
+          <a href="#new1" data-toggle="collapse">
+            <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> <b> My Consignment </b>  <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li></a>
+          <ul className="collapse"  id="new1" style={{ "listStyle": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
+            <Link to="/MyUsers" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> User Details
           </li>
-          <li className="nav-item">
-            <a href="#new2" data-toggle="collapse">
-              <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> Mi consignaciones <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li></a>
-            <ul className="collapse" id="new2" style={{ "list-style": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
-              <Link to="/MiUsers" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> Detalles de usuario
-            </li>
-              </Link>
+            </Link>
 
 
-              <Link to="/MiSales" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i>  Detalles de venta
-            </li>
-              </Link>
-              <Link to="/MiListings" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listado
+            <Link to="/MySales" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i> Sale Details
+          </li>
+            </Link>
+            <Link to="/MyListings" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listing
+      </li>
+            </Link>
+            <Link to="/MyCategory" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Categories
+  </li>
+            </Link>
+            <Link to="/MyReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fa fa-bug" aria-hidden="true"></i> Reports
+</li>
+          </Link>
+          <Link to="/MyListingReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fas fa-flag" aria-hidden="true"></i> Listing Reports
+</li>
+          </Link>
+
+          </ul>
         </li>
-              </Link>
-              <Link to="/MiCategory" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Las categorías
-    </li>
-              </Link>
-
-            </ul>
+        <li className="nav-item">
+          <a href="#new2" data-toggle="collapse">
+            <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> <b> Mi Consignacion </b> <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li></a>
+          <ul className="collapse" id="new2" style={{ "list-style": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
+            <Link to="/MiUsers" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> Detalles de usuario
           </li>
-          <li className="nav-item">
-            <a href="#new3" data-toggle="collapse">
-              <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> Pure Artisan <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li></a>
-            <ul className="collapse" id="new3" style={{ "list-style": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
-              <Link to="/PureUsers" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> User Details
-            </li>
-              </Link>
+            </Link>
 
 
-              <Link to="/PureSales" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i> Sale Details
-            </li>
-              </Link>
-              <Link to="/PureListings" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listing
+            <Link to="/MiSales" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i>  Detalles de venta
+          </li>
+            </Link>
+            <Link to="/MiListings" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listado
+      </li>
+            </Link>
+            <Link to="/MiCategory" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Las categorías
+  </li>
+            </Link>
+            <Link to="/MiReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fa fa-bug" aria-hidden="true"></i> Informes
+</li>
+          </Link>
+          <Link to="/MiListingReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fas fa-flag" aria-hidden="true"></i>  Listado de informes
+      </li>
+          </Link>
+
+          </ul>
         </li>
-              </Link>
-              <Link to="/PureCategory" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Categories
-    </li>
-              </Link>
-
-            </ul>
+        <li className="nav-item">
+          <a href="#new3" data-toggle="collapse">
+            <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> <b> Pure Artisan</b> <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li></a>
+          <ul className="collapse" id="new3" style={{ "list-style": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
+            <Link to="/PureUsers" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> User Details
           </li>
-          <li className="nav-item">
-            <a href="#new4" data-toggle="collapse">
-              <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> Pura Artesana <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li> </a>
-            <ul className="collapse" id="new4" style={{ "list-style": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
-              <Link to="/PureArUsers" className="nav-item">
-                <li  className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> Detalles de usuario
-            </li>
-
-              </Link>
+            </Link>
 
 
-              <Link to="/PureArSales" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i> Detalles de venta
-            </li>
-              </Link>
-              <Link to="/PureArListings" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listado
+            <Link to="/PureSales" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i> Sale Details
+          </li>
+            </Link>
+            <Link to="/PureListings" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listing
+      </li>
+            </Link>
+            <Link to="/PureCategory" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Categories
+  </li>
+            </Link>
+            <Link to="/PureReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fa fa-bug" aria-hidden="true"></i> Reports
+</li>
+          </Link>
+          <Link to="/PureListingReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fas fa-flag" aria-hidden="true"></i> Listing Reports
+</li>
+          </Link>
+
+          </ul>
         </li>
-              </Link>
-              <Link to="/PureArCategory" className="nav-item">
-                <li className=" bg-light">
-                  <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Las categorías
-    </li>
-              </Link>
-
-            </ul>
+        <li className="nav-item">
+          <a href="#new4" data-toggle="collapse">
+            <li className="list-group-item bg-light "><i className="fa fa-list" aria-hidden="true"></i> <b> Puro Artesanal </b> <i style={{"float": "right"}}  className="fas fa-sort-down"></i> </li> </a>
+          <ul className="collapse" id="new4" style={{ "list-style": "none" ,  "fontFamily" :"Comic Sans MS" ,"backgroundColor" : "white" , "color" : "black"  }}>
+            <Link to="/PureArUsers" className="nav-item">
+              <li  className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-users" aria-hidden="true"></i> Detalles de usuario
           </li>
 
-        </ul> </div>
+            </Link>
+
+
+            <Link to="/PureArSales" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-credit-card-alt" aria-hidden="true"></i> Detalles de venta
+          </li>
+            </Link>
+            <Link to="/PureArListings" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-list-ol" aria-hidden="true"></i> Listado
+      </li>
+            </Link>
+            <Link to="/PureArCategory" className="nav-item">
+              <li className=" bg-light">
+                <div className="col-md-1"></div> <i className="fa fa-folder" aria-hidden="true"></i> Las categorías
+  </li>
+            </Link>
+            <Link to="/PureArReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fa fa-bug" aria-hidden="true"></i> Informes
+</li>
+          </Link>
+          <Link to="/PureArListingReports" className="nav-item">
+            <li className=" bg-light">
+              <div className="col-md-1"></div> <i className="fas fa-flag" aria-hidden="true"></i> Listado de Informes
+</li>
+          </Link>
+
+          </ul>
+        </li>
+
+      </ul> </div>
           <br />
 
           <div className="col-md-9">

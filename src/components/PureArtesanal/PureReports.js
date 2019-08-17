@@ -3,100 +3,24 @@ import { Link } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import "./pure.css";
 import { CircleLoader } from 'react-spinners';
-export default class PureSales extends Component {
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
+
+export default class PureReports extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      LoginName: "",
-      Sales: [],
-      modelObj: {},
-      loading: false,
-    
+
     }
+
+    // this.handleReset = this.handleReset.bind(this);
     this.fetchData = this.fetchData.bind(this);
-    this.handleModel = this.handleModel.bind(this)
-    this.toggle = this.toggle.bind(this);
-    this.handleDeleteSales = this.handleDeleteSales.bind(this);
-    this.handleAssending = this.handleAssending.bind(this);
-    this.handleDeceding = this.handleDeceding.bind(this);
-    this.handleReset = this.handleReset.bind(this);
-  }
-  componentDidMount() {
-    this.setState({
-      loading: true
-    })
-    var user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      let loginperson = user.Name
-      let islogin = user.login
+    // this.handleModel = this.handleModel.bind(this)
+    // this.toggle = this.toggle.bind(this);
+    // this.handleDeleteReport = this.handleDeleteReport.bind(this);
+    this.handleDeleteSales = this.handleDeleteSales.bind(this)
+    this.Check = this.Check.bind(this)
 
-      if (islogin === 1) {
-        this.setState({
-          LoginName: loginperson
-        })
-        this.fetchData()
-
-      }
-
-    }
-    else {
-      alert("User Must Login First")
-      this.props.history.push("/")
-    }
-
-  }
-  handleDeleteSales(e) {
-   
-    let data = {
-      id: e
-    }
-    fetch("https://artisanbackend.herokuapp.com/api/deletOrder",
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      }).then(res => res.json())
-      .then(data => {
-
-        
-        this.fetchData()
-
-      }).catch(err => console.error(err))
-
-  }
-  handleModel(index) {
-    let num = this.state.Sales[index]
-    this.setState({
-      modelObj: num
-    }, () => {
-      this.toggle()
-    })
-
-  }
-  handleAssending() {
-    let list = this.state.Sales;
-    let newlist = list.sort((a, b) => b.amount - a.amount);
- 
-    this.setState({
-      Sales : newlist
-    });
-  }
-  handleDeceding() {
-    let list = this.state.Sales;
-    let newlist = list.sort((a, b) => a.amount - b.amount);
-  
-    this.setState({
-      Sales: newlist
-    });
-  }
-
-
-  toggle() {
-    this.setState(prevState => ({
-      modal: !prevState.modal
-    }));
   }
   handleLogout() {
     let user = {
@@ -105,34 +29,87 @@ export default class PureSales extends Component {
     }
     localStorage.setItem('user', JSON.stringify(user));
     this.props.history.push("/")
+
+  }
+  Check = (id) => {
+  
+        confirmAlert({
+          title: 'Confirm Delete',
+          message: 'Are you sure to do this.',
+          buttons: [
+            {
+              label: 'Yes',
+              onClick: () => {
+                this.handleDeleteSales(id)
+              }
+            },
+            {
+              label: 'No',
+              onClick: () => console.log("nothing happend")
+            }
+          ]
+        });
+      };
+    
+async  handleDeleteSales(id) {
+
+   
+    let Data = {
+      id: id
+    }
+
+  
+    await fetch("https://artisanbackend.herokuapp.com/api/DeleteReport", {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(Data)
+    })
+      .then(res => res.json())
+      .then(data => {
+       this.fetchData()
+      })
+      .catch(err => console.error(err));
+
+
   }
 
-  handleReset(){
-    this.fetchData()
-  }
+  componentDidMount() {
+    var user = JSON.parse(localStorage.getItem('user'));
+    let loginperson = user.Name
+    let islogin = user.login
 
+    if (islogin === 1) {
+      this.setState({
+        LoginName: loginperson
+      })
+      this.fetchData()
+
+    }
+    else {
+      alert("User Must Login First")
+      this.props.history.push("/")
+    }
+  }
   async fetchData() {
-    const response = await fetch("https://artisanbackend.herokuapp.com/api/getOrders",
+
+    const response = await fetch("https://artisanbackend.herokuapp.com/api/getReports",
       {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json"
         }
       });
     const json = await response.json();
-
     
-    if (json.length > 0) {
-      this.setState({
-        Sales: json,
-        loading: false  
-      }, () => {
 
-      })
-    }
-  }
-  handleTopToBotom(){
+    this.setState({
+      Reports: json.docs,
+      loading: false
 
+    })
   }
   render() {
     const style = {
@@ -144,17 +121,17 @@ export default class PureSales extends Component {
         {/* navigation */}
         <nav className="navbar navbar-expand-md bg-dark navbar-dark">
           <div className="container-fluid">
-          <h3 style={{"color": "white"}}><b>Admin Panel</b></h3>
+            <h3 style={{ "color": "white" }}><b>Admin Panel</b></h3>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
               <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse" id="collapsibleNavbar">
               <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
-                  
+
                 </li>
                 <li className="nav-item dropdown">
-                  <a className="nav-link dropdown-toggle"  id="navbardrop" data-toggle="dropdown">
+                  <a className="nav-link dropdown-toggle" id="navbardrop" data-toggle="dropdown">
                     {this.state.LoginName}
                   </a>
                   <div className="dropdown-menu">
@@ -337,57 +314,45 @@ export default class PureSales extends Component {
             <div className="row">
               <div className="col-md-12">
                 <div className="card">
-                  <div className="card-header"> <b>Sales Details </b></div>
+                  <div className="card-header"> <b>Reports Detail </b></div>
                   <div className="card-body">
-                    <div style={{"padding": 20}} className="row">
-                   
-                    <div className="col-sm-3" >    
-                    <button type="button" onClick={this.handleDeceding} className="btn btn-secondary">Price higher to low</button>
-                   </div>
-                <div className="col-sm-3" >
-                <button type="button" onClick={this.handleAssending}  className="btn btn-secondary">Price lower to high</button>
-                </div>
-                <div className="col-sm-3" >
-                <button type="button" onClick={this.handleReset}  className="btn btn-secondary">Reset</button>
-                </div>
+                    <div style={{ "padding": 20 }} className="row">
 
-                
-
-                      <div style={{ "textAlign": "center" , "marginTop": 10 }} className="table-responsive">
-                       {this.state.loading &&
-                            <div className='sweet-loading'>
-                              <CircleLoader
-                                css={style}
-                                sizeUnit={"px"}
-                                size={100}
-                                color={'#2fbb9f'}
-                                loading={this.state.loading}
-                              />
-                            </div>}
-                    {this.state.loading === false &&     <table className="table table-hover">
+                      <div style={{ "textAlign": "center", "marginTop": 10 }} className="table-responsive">
+                        {this.state.loading &&
+                          <div className='sweet-loading'>
+                            <CircleLoader
+                              css={style}
+                              sizeUnit={"px"}
+                              size={100}
+                              color={'#2fbb9f'}
+                              loading={this.state.loading}
+                            />
+                          </div>}
+                        {this.state.loading === false && <table className="table table-hover">
                           <thead>
                             <tr>
                               <th>S.No</th>
-                              <th> Seller Name</th>
-                              <th>Tittle</th>
-                              <th>Amount</th>
-                              <th> Buyer Name</th>
+                              <th> Tittle </th>
+                              <th>Full Name</th>
+                              <th>Email</th>
+                              <th> Report Type </th>
                               <th> Actions</th>
                             </tr>
                           </thead>
-                        {this.state.Sales &&  <tbody>
-                         
-                            {this.state.loading===false && this.state.Sales && this.state.Sales.map((item, index) => {
+                          {this.state.Reports && <tbody>
+
+                            {this.state.loading === false && this.state.Reports && this.state.Reports.map((item, index) => {
                               return (
                                 <tr key={index}>
-                                  <td>{index + 1}</td>
-                                  <td>{item.sellerName}</td>
+                                  <td> <b>{index + 1} </b></td>
                                   <td>{item.title}</td>
-                                  <td>{item.amount}</td>
-                                  <td>{item.buyerName}</td>
+                                  <td>{item.fName}</td>
+                                  <td>{item.email}</td>
+                                  <td>{item.type}</td>
                                   <td>
-                                    <button className="btn btn-success" onClick={() => { this.handleDeleteSales(item._id) }} type="submit" style={{ "margin": 10 }}>Delete</button>
-                                    <button className="btn btn-success" type="submit" onClick={() => { this.handleModel(index) }} data-toggle="modal" data-target="#myModal">View</button>
+                                    <button className="btn btn-success" onClick={() => { this.Check(item._id) }} type="submit" style={{ "margin": 10 }}>Delete</button>
+
                                   </td>
                                 </tr>
                               )
@@ -400,7 +365,7 @@ export default class PureSales extends Component {
                           </tbody>}
                         </table>}
                       </div>
-                     
+
                     </div>
                   </div>
 
@@ -411,22 +376,22 @@ export default class PureSales extends Component {
           </div>
         </div>
 
-        <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-          <ModalHeader toggle={this.toggle}>
-            <img src={this.state.modelObj.imageLink} className="img-fluid" alt="Responsive image"></img>
-          </ModalHeader>
-          <ModalBody style={{"fontFamily": "monospace" }}>
-            <h4> Category :  {this.state.modelObj.Category} </h4>
-            <h4>  Seller Name :  {this.state.modelObj.sellerName} </h4>
-            <h4> Buyer Name :  {this.state.modelObj.buyerName}</h4>
-            <p> <b> Description :  </b> {this.state.modelObj.description}</p>
-
-          </ModalBody>
-          <ModalFooter>
-
-          </ModalFooter>
-        </Modal>
-
+        {  /*  <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+                    <ModalHeader toggle={this.toggle}>
+                      <img src={this.state.modelObj.imageLink} className="img-fluid" alt="Responsive image"></img>
+                    </ModalHeader>
+                    <ModalBody style={{"fontFamily": "monospace" }}>
+                      <h4> Category :  {this.state.modelObj.Category} </h4>
+                      <h4>  Seller Name :  {this.state.modelObj.sellerName} </h4>
+                      <h4> Buyer Name :  {this.state.modelObj.buyerName}</h4>
+                      <p> <b> Description :  </b> {this.state.modelObj.description}</p>
+          
+                    </ModalBody>
+                    <ModalFooter>
+          
+                    </ModalFooter>
+                  </Modal>*/
+        }
 
       </div>
     )

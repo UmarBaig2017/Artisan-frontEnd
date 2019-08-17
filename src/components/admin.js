@@ -8,6 +8,7 @@ constructor(props){
     Email: "",
     pw: "",  
   };
+  this.ForgetPass = this.ForgetPass.bind(this);
   this.handleChange = this.handleChange.bind(this);
   this.handleLogin = this.handleLogin.bind(this)
 }
@@ -33,6 +34,9 @@ handleLogin(e) {
    alert(err)
   })
 
+}
+ForgetPass(){
+  this.props.history.push("/Reset")
 }
   render() {
     return (
@@ -60,10 +64,10 @@ handleLogin(e) {
                                 name="pw" id="password" className="form-control"/>
                             </div>
                             <div className="form-group">
-                            <button onClick={this.handleLogin} className="btn btn-info btn-md"> <i className="fa fa-sign-in" aria-hidden="true"></i> Login</button>
-                               
-                              
+                            <button onClick={this.handleLogin} className="btn btn-info btn-md"> <i className="fa fa-sign-in" aria-hidden="true"></i> Login</button> <button style={{"float": "right"}} onClick={this.ForgetPass} className="btn btn-outline-danger"> <i class="fas fa-wrench"></i>  Forget Password</button>
+                             
                             </div>
+                           
                            
                         </form>
                     </div>

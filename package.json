@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "bootstrap": "^4.2.1",
     "firebase": "^5.11.0-1",
     "materialize-css": "^1.0.0-rc.2",
@@ -12,6 +13,7 @@
     "react-bootstrap": "^1.0.0-beta.8",
     "react-bootstrap-carousel": "^3.4.1",
     "react-bootstrap-modal": "^4.2.0",
+    "react-confirm-alert": "^2.4.1",
     "react-dom": "^16.7.0",
     "react-loader-spinner": "^2.3.0",
     "react-redux": "^5.0.6",
@@ -34,7 +36,6 @@
   },
   "browserslist": [
     ">0.2%",
-    "not dead",
     "not ie <= 11",
     "not op_mini all"
   ]
